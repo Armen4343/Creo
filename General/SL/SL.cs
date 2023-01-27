@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace General
 {
-	public class SL
+	public sealed class SL
 	{
 		private static readonly Dictionary<Type, IService> services = new(30);
 		
