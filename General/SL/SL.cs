@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace General
 {
-	public sealed class SL
+	public static class SL
 	{
 		private static readonly Dictionary<Type, IService> services = new(30);
-		
-		private SL(){}
 
 		#region Methods
 
