@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using General;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,6 +10,9 @@ public class Slot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _itemName;
     [SerializeField] private TextMeshProUGUI _itemCount;
     [SerializeField] private GameObject _itemCountGameObject;
+    private InventorySystem inventorySystem;
+
+    private void Start() => SL.GetSingle(out inventorySystem);
 
     public void Set(InventoryItem inventoryItem)
     {
@@ -35,11 +37,11 @@ public class Slot : MonoBehaviour
 
     public void Remove()
     {
-        var slot = InventorySystem.shared.Inventory.Find(t => t.data.id == id);
-        if (slot != null)
+        var inventoryItem = inventorySystem.Inventory.Find(t => t.data.id == id);
+        if (inventoryItem != null)
         {
-            InventorySystem.shared.RemoveItem(slot.data);
+            inventorySystem.RemoveItem(inventoryItem.data.id);
         }
-        Destroy(gameObject);
+        Destroy(this);
     }
 }

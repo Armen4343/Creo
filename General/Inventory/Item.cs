@@ -1,14 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
+using General;
 using UnityEngine;
 
 public class Item : MonoBehaviour
 {
     public InventoryItemData itemData;
+    private InventorySystem inventorySystem;
 
-    public void OnItemPickUp()
+    private void Start() => SL.GetSingle(out inventorySystem);
+
+    private void OnItemPickUp()
     {
-        InventorySystem.shared.AddItem(itemData);
+        inventorySystem.AddItem(itemData);
         Destroy(gameObject);
     }
 

@@ -1,36 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
+using General;
 using UnityEngine;
 
-public class InventorySystem : MonoBehaviour
+public class InventorySystem : MonoBehaviour,IService
 {
 	[SerializeField] private InventoryUI _inventoryUI;
 
-    private Dictionary<InventoryItemData, InventoryItem> items;
+	private SerializedDictionary<string, InventoryItem> items = new SerializedDictionary<string, InventoryItem>(30);
 	private List<InventoryItem> inventory = new List<InventoryItem>(30);
-
-	public static InventorySystem shared;
 
 	public List<InventoryItem> Inventory => inventory;
 
-	private void Awake()
-	{
-		items = new Dictionary<InventoryItemData, InventoryItem>();
+	private void Awake() => SL.AddSingle(this,SetMode.Force);
 
-		if (shared != null && shared != this)
-		{
-			Destroy(this);
-		}
-		else
-		{
-			shared = this;
-			//DontDestroyOnLoad(shared);
-		}
-	}
-
-	public InventoryItem GetItem(InventoryItemData itemData)
+	public InventoryItem GetItem(string id)
 	{
-		if (items.TryGetValue(itemData, out InventoryItem value))
+		if (items.TryGetValue(id, out InventoryItem value))
 		{
 			return value;
 		}
@@ -39,7 +24,7 @@ public class InventorySystem : MonoBehaviour
 
 	public void AddItem(InventoryItemData itemData)
 	{
-		if (items.TryGetValue(itemData, out InventoryItem value))
+		if (items.TryGetValue(itemData.id, out InventoryItem value))
 		{
 			value.AddToInventory();
 			_inventoryUI.UpdateSlot(value);
@@ -48,14 +33,14 @@ public class InventorySystem : MonoBehaviour
 		{
 			InventoryItem newItem = new InventoryItem(itemData);
 			inventory.Add(newItem);
-			items.Add(itemData, newItem);
+			items.Add(itemData.id, newItem);
 			_inventoryUI.AddSlot(newItem);
 		}
 	}
 
-	public void RemoveItem(InventoryItemData itemData)
+	public void RemoveItem(string id)
 	{
-		if (items.TryGetValue(itemData, out InventoryItem value))
+		if (items.TryGetValue(id, out InventoryItem value))
 		{
 			value.RemoveFromInventory();
 			_inventoryUI.UpdateSlot(value);
@@ -63,7 +48,7 @@ public class InventorySystem : MonoBehaviour
 			if (value.stackSize == 0)
 			{
 				inventory.Remove(value);
-				items.Remove(itemData);
+				items.Remove(id);
 				_inventoryUI.RemoveSlot(value);
 			}
 		}
